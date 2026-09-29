@@ -35,7 +35,7 @@ The system is built on a strict two-role architecture (no complex multi-tier RBA
 
 ## 5. Core Features Implemented
 - **Authentication**: Passwordless OTP login, session management via JWT. No passwords exist in the system.
-- **Real Email Integration**: Live OTPs are securely delivered to user emails using `nodemailer` and Gmail SMTP App Passwords.
+- **Real Email Integration**: Live OTPs are securely delivered to user emails using `nodemailer` and dynamic SMTP variables (e.g. Google Workspace/App Passwords).
 - **Identity Verification**: Name and College/Institute matching against uploaded ID documents during registration.
 - **Issue Reporting**: Submission of issues with categories, descriptions, locations, and robust image evidence uploads (handling Android `FormData` native objects flawlessly).
 - **Issue Tracking**: Detailed timelines mapping status changes.
@@ -43,32 +43,33 @@ The system is built on a strict two-role architecture (no complex multi-tier RBA
 - **In-App Notifications**: Real-time notifications for users when an issue's status or priority changes.
 - **Role-based Security**: Strict API routing and data protection ensuring users cannot mutate authority endpoints and vice-versa.
 
-## 6. UI/UX & Design Philosophy
+## 6. Security & Production Readiness (Phase 11.5)
+The application has undergone a comprehensive production-readiness hardening phase:
+- **Environment Isolation:** All sensitive credentials (`MONGODB_URI`, `JWT_SECRET`, `SMTP_PASS`) are injected via `.env` files which are securely git-ignored.
+- **Upload Protection:** The backend `/uploads` directory is secured with the `requireAuth` JWT verification middleware. Unauthenticated actors cannot access sensitive uploaded identity documents or evidence photos. Mobile `Image` components securely inject `Authorization: Bearer <token>` headers to retrieve images.
+- **Hardcoded Secrets Removed:** Stripped fallback backend connection strings (`localhost`) and dummy frontend URLs. The mobile app strictly relies on `EXPO_PUBLIC_API_URL` injected at build time.
+- **OTP Log Hiding:** OTP generation console logs are strictly suppressed in `production` environments to prevent sensitive data leaks.
+
+## 7. UI/UX & Design Philosophy
 - **Philosophy:** "Show only what the user needs at that moment."
 - **Style:** Minimal, clean, professional, and mobile-first. Avoids heavy shadows, 3D elements, or AI SaaS aesthetics.
 - **Color System:** Primary (`#176B52`), Dark Slate (`#24332F`), Background (`#F7F8F6`), Surface (`#FFFFFF`), with semantic colors for statuses (Success: `#2E7D5B`, Warning: `#B7791F`, Error: `#C94A4A`).
 - **Touch-Friendly:** Uses native interactions like bottom sheets, standard safe areas, and minimum 44x44 points for touch targets.
 
-## 7. Architecture Highlights
+## 8. Architecture Highlights
 - **Mobile Client (Frontend):** Expo (React Native), React Navigation (Stack Navigators for Auth, Bottom Tab Navigators for roles). React Context API for global state.
 - **Networking:** `Axios` implemented as a custom API Client. Axios specifically bypasses the notorious Android OkHttp `FormData` boundary bugs, ensuring highly stable image uploads across all physical devices.
 - **Backend API:** Node.js + Express REST API. Middleware for Auth and File Uploads (`multer`). Controllers strictly separated from services. Request validation is handled seamlessly.
 - **Database (Mongoose Schemas):** 
   - **User:** Stores email, full name, phone, college, ID card URL, verification status, and role.
   - **Issue:** Stores category, location, description, photo URL, status, priority, and management remarks.
-- **Deployment-Ready:** Environment variables properly isolated (e.g., `EXPO_PUBLIC_API_URL` for mobile, `MONGODB_URI` and `SMTP` credentials for server). No hardcoded secrets, robust CORS configuration.
-
-## 8. Recent Bug Fixes & Polish
-- **Admin Panel UI/UX**: Overhauled the `AuthorityDashboardScreen` layout to a responsive 2x2 grid for summary boxes, making them fully clickable to route to the Issues tab. Added a Notification Bell to the admin header reflecting unread counts.
-- **One-Click Operational Actions**: Revamped the `AuthorityIssueDetailsScreen` to include quick-action buttons (Approve, Resolve, Reject) for seamless status updates.
-- **Evidence Rendering Fix**: Replaced hardcoded `localhost` IPs with a dynamic `API_BASE_URL` resolution strategy in the Issue Details screens, ensuring uploaded evidence photos render correctly.
-- **Security & Network**: Removed all development OTP bypasses. The system strictly relies on the real Gmail SMTP service for OTP delivery. Added detailed backend server logging to facilitate offline local testing.
+  - **OTP & Notification:** Transient stores for one-time passwords and persistent stores for user timeline updates.
 
 ## 9. Development Phases & Current State
-The project has successfully completed Phases 0 through 11, encompassing mobile setup, authentication, identity verification, dashboards, issue reporting/tracking, management workflows, priorities, and notifications.
+The project has successfully completed Phases 0 through 11.5, encompassing mobile setup, authentication, identity verification, dashboards, issue reporting/tracking, management workflows, priorities, notifications, and production readiness preparation.
 
-**Status:** MVP REFINED & POLISHED. (Core MVP Freeze)
-All core workflows are complete, fully tested on physical devices, and working synchronously. The UI aligns with modern mobile standards and the system is production-ready for demonstration. There are 0 TypeScript compilation errors on both backend and frontend.
+**Status:** MVP REFINED & PRODUCTION-READY.
+All core workflows are complete, fully tested on physical devices, securely guarded, and working synchronously. The UI aligns with modern mobile standards and the system is ready for live production demonstration. There are 0 TypeScript compilation errors on both backend and frontend.
 
 ## 10. Future Roadmap & Upcoming Features (Deferred)
 To take the application to the next level (BPUT 'Innovation' Category), the following advanced capabilities are planned:
