@@ -28,6 +28,12 @@
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fe9fe6bb-947a-4bc0-876f-a6f409916d75"
+      }
+    },
+    "owner": "i_m_aditya_29"
   }
 }
