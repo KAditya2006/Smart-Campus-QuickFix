@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "Smart Campus QuickFix",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,6 +15,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.smartcampus.quickfix",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/quickfix_logo.jpg"
