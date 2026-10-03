@@ -23,5 +23,6 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     console.log(`[EMAIL SERVICE] Sent email to ${to}`);
   } catch (error) {
     console.error(`[EMAIL SERVICE] Error sending email to ${to}:`, error);
+    throw error;
   }
 };

@@ -87,12 +87,12 @@ export const register = async (req: Request, res: Response) => {
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[DEBUG] Generated REGISTRATION OTP for ${email}: ${otp}`);
     }
-    sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp);
 
     return res.status(201).json({ success: true, message: 'Registration successful. OTP sent to email.' });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Internal server error', details: error?.message || 'Unknown error' });
   }
 };
 
@@ -185,12 +185,12 @@ export const sendLoginOtp = async (req: Request, res: Response) => {
     if (process.env.NODE_ENV !== 'production') {
       console.log(`[DEBUG] Generated LOGIN OTP for ${email}: ${otp}`);
     }
-    sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp);
 
     return res.status(200).json({ success: true, message: 'OTP sent to email.' });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Internal server error', details: error?.message || 'Unknown error' });
   }
 };
 
