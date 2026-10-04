@@ -27,7 +27,7 @@ import { sendEmail } from '../services/emailService';
 
 const sendOtpEmail = async (email: string, otp: string) => {
   const subject = 'Your Smart Campus QuickFix OTP';
-  const text = `Your One-Time Password (OTP) is: ${otp}\n\nIt is valid for a short time. Please do not share this with anyone.`;
+  const text = `Your verification OTP is: ${otp}\n\nThis OTP expires in a short period.\nDo not share this OTP with anyone.\n\nSmart Campus QuickFix`;
   await sendEmail(email, subject, text);
 };
 
@@ -91,8 +91,8 @@ export const register = async (req: Request, res: Response) => {
 
     return res.status(201).json({ success: true, message: 'Registration successful. OTP sent to email.' });
   } catch (error: any) {
-    console.error(error);
-    return res.status(500).json({ success: false, error: 'Internal server error', details: error?.message || 'Unknown error' });
+    console.error('[AUTH CONTROLLER] Registration error:', error.message || error);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 
@@ -189,8 +189,8 @@ export const sendLoginOtp = async (req: Request, res: Response) => {
 
     return res.status(200).json({ success: true, message: 'OTP sent to email.' });
   } catch (error: any) {
-    console.error(error);
-    return res.status(500).json({ success: false, error: 'Internal server error', details: error?.message || 'Unknown error' });
+    console.error('[AUTH CONTROLLER] Login error:', error.message || error);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 

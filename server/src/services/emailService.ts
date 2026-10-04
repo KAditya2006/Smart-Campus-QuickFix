@@ -1,38 +1,29 @@
-import nodemailer from 'nodemailer';
-import dns from 'dns';
+import { Resend } from 'resend';
 
-// Force IPv4 to prevent connection hanging on Render due to IPv6 routing issues
-dns.setDefaultResultOrder('ipv4first');
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: true,
-  tls: {
-    rejectUnauthorized: false
-  },
-  auth: {
-    user: process.env.SMTP_USER || process.env.EMAIL_USER,
-    pass: process.env.SMTP_PASS || process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 5000,
-  greetingTimeout: 5000,
-  socketTimeout: 5000,
-});
+// Initialize Resend with the API key from environment variables
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to: string, subject: string, text: string) => {
   try {
-    const fromUser = process.env.SMTP_USER || process.env.EMAIL_USER;
-    const mailOptions = {
-      from: `"Smart Campus QuickFix" <${fromUser}>`,
-      to,
+    const fromName = process.env.EMAIL_FROM_NAME || 'Smart Campus QuickFix';
+    const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+    
+    const { data, error } = await resend.emails.send({
+      from: `${fromName} <${fromEmail}>`,
+      to: [to],
       subject,
       text,
-    };
-    await transporter.sendMail(mailOptions);
-    console.log(`[EMAIL SERVICE] Sent email to ${to}`);
-  } catch (error) {
-    console.error(`[EMAIL SERVICE] Error sending email to ${to}:`, error);
-    throw error;
+    });
+
+    if (error) {
+      console.error(`[EMAIL SERVICE] Provider error sending email to ${to}:`, error);
+      throw new Error(error.message);
+    }
+    
+    // Kept for basic internal logging, but sanitized. No raw details exposed.
+    console.log(`[EMAIL SERVICE] Successfully sent email to ${to}`);
+  } catch (err: any) {
+    console.error(`[EMAIL SERVICE] Exception sending email to ${to}:`, err);
+    throw new Error('Email delivery failed');
   }
 };
