@@ -62,7 +62,7 @@ The system is built on a strict two-role architecture within a single mobile app
 - **Touch-Friendly:** Uses native interactions like bottom sheets, standard safe areas, and minimum 44x44 points for touch targets. Moderate border radius (8px - 16px).
 
 ## 6. Core Features Implemented
-- **Authentication**: Passwordless OTP login, session management via JWT. Live OTPs are securely delivered to user emails using `nodemailer` and dynamic SMTP variables.
+- **Authentication**: Passwordless OTP login, session management via JWT. Live OTPs are securely delivered to user emails using the **Resend HTTPS API**, completely bypassing traditional SMTP port blocks on strict cloud environments like Render.
 - **Identity Verification**: Name and College/Institute matching against uploaded ID documents during registration.
 - **Issue Reporting**: Submission of issues with categories, descriptions, locations, and robust image evidence uploads.
 - **Issue Tracking**: Detailed timelines mapping status changes.
@@ -72,7 +72,7 @@ The system is built on a strict two-role architecture within a single mobile app
 
 ## 7. Security, Privacy & Production Readiness (Phase 11.5)
 The application has undergone a comprehensive production-readiness hardening phase:
-- **Environment Isolation:** All sensitive credentials (`MONGODB_URI`, `JWT_SECRET`, `SMTP_PASS`, `EXPO_PUBLIC_API_URL`) are injected via `.env` files which are securely git-ignored.
+- **Environment Isolation:** All sensitive credentials (`MONGODB_URI`, `JWT_SECRET`, `RESEND_API_KEY`, `EXPO_PUBLIC_API_URL`) are injected via `.env` files which are securely git-ignored.
 - **Upload Protection:** The backend `/uploads` directory is secured with the `requireAuth` JWT verification middleware. Unauthenticated actors cannot access sensitive uploaded identity documents or evidence photos. Mobile `Image` components securely inject `Authorization: Bearer <token>` headers to retrieve images.
 - **Hardcoded Secrets Removed:** Stripped fallback backend connection strings and dummy frontend URLs.
 - **OTP Log Hiding:** OTP generation console logs are strictly suppressed in `production` environments to prevent sensitive data leaks.
